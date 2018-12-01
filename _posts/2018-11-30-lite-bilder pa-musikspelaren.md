@@ -1,5 +1,6 @@
 ---
 layout: post
+title: Lite bilder på musikspelaren
 date: 2018-11-30 09:00
 time: 09:00
 ---
