@@ -1,8 +1,7 @@
 ---
-layout: post
+layout: micropubpost
 title: Lite bilder på musikspelaren
 date: 2018-11-30 09:00
-time: 09:00
 ---
 
 Är rätt nöjd med min musikspelare. Så här är lite bilder av skapelsen.

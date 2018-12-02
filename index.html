@@ -1,5 +1,5 @@
 ---
-layout: microblogpost
+layout: micropubpost
 title: Larsabrasha
 ---
 
@@ -22,7 +22,19 @@ title: Larsabrasha
         >{{ post.date | date_to_string }}</span
       >
     </div>
-    <div>{{ post.content }}</div>
+    <div>
+      {{ post.content }}
+
+      {% if post.mf-photo %}
+      {% for photo in post.mf-photo %}
+      <p>
+        <a href="{{photo}}">
+          <img src="{{photo}}" width="100%" class="rounded" />
+        </a>
+      </p>
+      {% endfor %}
+      {% endif %}
+    </div>
   </div>
 </div>
 {% endfor %}
