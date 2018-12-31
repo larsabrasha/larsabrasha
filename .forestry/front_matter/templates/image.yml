@@ -6,8 +6,5 @@ fields:
 - type: image_gallery
   name: mf-photo
   label: Photo
-- type: textarea
-  name: content
-  label: Comment
 pages:
 - _posts/sa-sat-sa-sat.md
