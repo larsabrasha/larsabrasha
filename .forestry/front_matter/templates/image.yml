@@ -8,4 +8,4 @@ fields:
   label: Photo
 - type: textarea
   name: content
-  label: Content
+  label: Comment
