@@ -3,7 +3,9 @@ label: Image
 hide_body: false
 is_partial: false
 fields:
-- type: file
-  label: Photo
+- type: image_gallery
   name: mf-photo
-- type: text
+  label: Photo
+- type: textarea
+  name: content
+  label: Content
