@@ -9,3 +9,5 @@ fields:
 - type: textarea
   name: content
   label: Comment
+pages:
+- _posts/sa-sat-sa-sat.md
