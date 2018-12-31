@@ -1,0 +1,9 @@
+---
+label: Image
+hide_body: false
+is_partial: false
+fields:
+- type: file
+  label: Photo
+  name: mf-photo
+- type: text
