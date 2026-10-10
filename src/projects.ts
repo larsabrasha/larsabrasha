@@ -46,10 +46,11 @@ export const projects: Project[] = [
       'Det finns också ett kommandoradsverktyg, mest för att Claude ska kunna rita åt mig. Har jag appen öppen samtidigt ser jag ändringarna dyka upp direkt.',
     ],
     highlights: [
-      '3D-vy med träslag, ådring och skuggor',
-      'Kaplista och sågplan direkt ur modellen',
-      'Fungerar offline och synkas mellan datorn och mobilen',
-      'CLI som Claude kan använda',
+      'Ställ möbeln i rummet med AR, eller gå runt den i VR',
+      'Tappar och tapphål räknas ut och skärs automatiskt',
+      'Sågplan med svenska virkesmått, som går att följa på en bordssåg',
+      'Ritningar som PDF i rätt skala',
+      'Claude kan rita möbler åt mig via ett CLI',
     ],
     cool: [
       { title: 'Ställ möbeln i rummet', text: 'På iPhone och iPad kan man placera möbeln i verklig storlek i sitt eget rum med AR. Appen gör om modellen till en 3D-fil som Apples AR-visare öppnar, med träet och tapparna på plats. Då ser man direkt om bordet får plats.' },
@@ -87,10 +88,11 @@ export const projects: Project[] = [
       'Jag kunde inte låta bli att lägga till ett memory, en labyrint och ett läge där man målar en egen pralin och delar den med en länk. Madde kan också ändra sortiment och priser genom att prata med Claude eller ChatGPT. Sajten har en MCP-server för det.',
     ],
     highlights: [
-      'Pralinerna ritas i 3D, med ett mönster per smak',
-      'Askar om 8 och 12, minst fyra av varje smak',
-      'Memory, labyrint och måla din egen pralin',
-      'Adminsida och MCP-server för Madde',
+      'Labyrint för två spelare, telefon mot telefon',
+      'Ställ en pralin på bordet med AR',
+      'Praliner ritade av kod, som går att snurra och luta',
+      'Madde sköter butiken genom att chatta med Claude eller ChatGPT',
+      'Tolv hemliga praliner att leta efter',
     ],
     cool: [
       { title: 'Labyrint för två', text: 'Pralinlabyrinten är ett 3D-spel där man letar praliner, ensam eller två tillsammans. Man bjuder in med en kod, en QR-kod eller en länk, och telefonerna pratar sedan direkt med varandra över WebRTC. Servern hjälper bara till att koppla ihop dem, och fler kan titta på.' },
@@ -130,9 +132,11 @@ export const projects: Project[] = [
       'Med ett vanligt akustiskt piano lyssnar appen genom mikrofonen. Efter ett försök visar den vilka takter som var svårast och låter en öva bara dem, lite långsammare, tills de går tre gånger i rad.',
     ],
     highlights: [
-      'Fallande noter, vanliga noter eller en rullande notrad',
-      'Egna låtar blir lektioner',
-      'Kan styras helt från pianot',
+      'Styr appen från pianot, med ackord som meny',
+      'Lyssnar på ett vanligt piano och lär sig dess stämning',
+      'MIDI-filer, ackordscheman och notfoton blir lektioner',
+      'Fingersättning som stämmer till 84 % med Diabelli',
+      'Inga streaks eller poäng att jaga',
     ],
     cool: [
       { title: 'Hör ett vanligt piano', text: 'Utan MIDI-kabel lyssnar appen genom mikrofonen och hör både enstaka toner och ackord. Tonigenkänningen är skriven från grunden för pianot, utan något färdigt bibliotek.' },
@@ -174,10 +178,11 @@ export const projects: Project[] = [
       'Sångerna ligger i ett bibliotek med versionshistorik och kan importeras från ProPresenter. Appen sparar också vilka sånger som visats, vilket gör CCLI-rapporten enklare.',
     ],
     highlights: [
-      'Sånger, bibelord, bilder och PDF i samma presentation',
-      'Församlingen kan följa texten i mobilen',
-      'Scenläge för lovsångsledaren',
-      'Import från ProPresenter',
+      'Församlingen följer sångtexten i mobilen via en QR-kod',
+      'Styr presentationen från mobilen',
+      'Datorprogrammet fortsätter som vanligt om nätet dör mitt i gudstjänsten',
+      'Läser ProPresenter-filer direkt',
+      'CCLI-rapporten fyller sig själv',
     ],
     cool: [
       { title: 'Sångtexten i mobilen', text: 'Vem som helst i kyrkan kan skanna en QR-kod och följa texten i mobilen, utan konto. Sidan är byggd för att en hel församling på samma wifi ska fungera, även när telefonerna släcker skärmen och kopplar upp sig igen.' },
@@ -218,9 +223,10 @@ export const projects: Project[] = [
       'Första versionen var skriven i Blazor och .NET. Sedan skrev jag om den i React och TypeScript. Datamodellen är densamma, så de gamla passen följde med.',
     ],
     highlights: [
-      'Läser och skriver alltid lokalt, synkar i bakgrunden',
-      'Mallar, kalender och statistik',
-      'Ligger på hemskärmen som en app',
+      'Fungerar helt utan nät och synkar i bakgrunden',
+      'Bara beröm, inga streaks som bryts',
+      'Känns som en iPhone-app, utan UI-bibliotek',
+      '302 övningar med bild, som finns kvar offline',
     ],
     cool: [
       { title: 'Nätet är valfritt', text: 'Allt sparas först i telefonen, och ändringar väntar i en utkorg tills det finns nät. Ett helt pass skickas som en enhet, så det blir aldrig halvsparat. Ett automatiskt test visar att appen startar, sparar och laddar om helt utan nät.' },

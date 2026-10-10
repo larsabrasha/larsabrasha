@@ -203,9 +203,6 @@ function Showcase({ p, index }: { p: Project; index: number }) {
           <p className="mt-2 text-lg font-medium text-muted">{p.title}</p>
           <p className="mt-5 leading-relaxed">{p.summary}</p>
           {p.id === 'piano' && <div data-island="keyboard" className="mt-6 min-h-[7.5rem]" />}
-          <div className="mt-6">
-            <Tags tech={p.tech} />
-          </div>
           <div className="mt-8">
             <Buttons p={p} more />
           </div>
