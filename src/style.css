@@ -1,0 +1,123 @@
+@import 'tailwindcss';
+@source '.';
+
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+@theme inline {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --color-canvas: var(--canvas);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: color-mix(in oklab, var(--accent) 22%, var(--panel));
+  --color-soft: var(--soft);
+  --color-on-accent: var(--on-accent);
+  --shadow-frame: 0 1px 2px rgb(0 0 0 / 0.06), 0 20px 50px -20px rgb(40 30 20 / 0.35);
+}
+
+/* The palette is Bygg's; each project sets --accent and --soft on its own section. */
+:root {
+  --canvas: #f2f1ee;
+  --panel: #fbfaf8;
+  --ink: #2a2724;
+  --muted: #6b655c;
+  --faint: #8a847a;
+  --line: #d8d4cc;
+  --accent: #2a2724;
+  --soft: #e8e5df;
+  --on-accent: #ffffff;
+  color-scheme: light dark;
+}
+
+/* A project's colours, set inline by accentStyle() in src/pages.tsx. */
+[style*='--accent-light'] {
+  --accent: var(--accent-light);
+  --soft: var(--soft-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #171614;
+    --panel: #201e1b;
+    --ink: #eeebe5;
+    --muted: #a8a196;
+    --faint: #847d72;
+    --line: #38342f;
+    --on-accent: #171614;
+    --accent: #eeebe5;
+    --soft: #22201d;
+  }
+  [style*='--accent-dark'] {
+    --accent: var(--accent-dark);
+    --soft: var(--soft-dark);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.hero-gradient {
+  background: linear-gradient(100deg, #9a6232, #c2410c 30%, #006adb 65%, #0d7a5f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-color-scheme: dark) {
+  .hero-gradient {
+    background-image: linear-gradient(100deg, #d9a46a, #fb923c 30%, #6fb0ff 65%, #5fd0ac);
+  }
+}
+
+/* Large view of a screenshot, opened with a popover button: no JavaScript. */
+.lightbox {
+  margin: auto;
+  max-width: min(96vw, 110rem);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+}
+.lightbox::backdrop {
+  background: rgb(10 9 8 / 0.85);
+  backdrop-filter: blur(6px);
+}
+.lightbox-img {
+  max-height: 88vh;
+  width: auto;
+  max-width: 100%;
+  border-radius: 0.75rem;
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.5);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-in {
+    animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .hero-in:nth-child(2) { animation-delay: 80ms; }
+  .hero-in:nth-child(3) { animation-delay: 160ms; }
+  .hero-in:nth-child(4) { animation-delay: 240ms; }
+
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+  .lightbox:popover-open {
+    animation: zoom 220ms ease-out;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes zoom {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
