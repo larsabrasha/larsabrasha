@@ -3,7 +3,7 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import type { CSSProperties, ReactNode } from 'react'
-import { projects, type Project, type Shot } from './projects.ts'
+import { extras, projects, type Project, type Shot } from './projects.ts'
 
 const SITE = 'https://larsabrasha.com'
 
@@ -255,6 +255,27 @@ export function Home() {
             <Showcase key={p.id} p={p} index={i} />
           ))}
         </div>
+        <section className="mx-auto mt-24 max-w-6xl px-5 sm:px-8">
+          <h2 className="text-3xl font-bold tracking-tight">Annat jag har byggt</h2>
+          <p className="mt-3 text-muted">Mindre saker, mest för hemmet och för skojs skull.</p>
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {extras.map((e) => (
+              <li key={e.name} className="reveal">
+                <a href={e.href} className="group flex h-full flex-col rounded-2xl border border-line bg-panel p-6 transition hover:-translate-y-1 hover:border-ink/30">
+                  <span className="flex items-baseline justify-between gap-3 font-semibold tracking-tight">
+                    {e.name}
+                    {e.href && (
+                      <span className="text-muted transition group-hover:text-ink" aria-hidden="true">
+                        ↗
+                      </span>
+                    )}
+                  </span>
+                  <span className="mt-2 text-sm leading-relaxed text-muted">{e.text}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
       </main>
       <Footer />
     </Document>

@@ -251,3 +251,38 @@ export const projects: Project[] = [
     ],
   },
 ]
+
+export interface Extra {
+  name: string
+  text: string
+  href?: string
+}
+
+/** Smaller things, listed at the bottom of the start page. */
+export const extras: Extra[] = [
+  {
+    name: 'Smartvåg av en Wii-bräda',
+    text: 'En Raspberry Pi läser de fyra lastcellerna i en Wii Balance Board, väntar tills man står still och skickar vikten till Home Assistant.',
+    href: 'https://github.com/larsabrasha/body-stats',
+  },
+  {
+    name: 'FAST9 för TI-84',
+    text: 'Ett spel i Z80-assembler för grafräknaren: skriv 1+2+3+4+5+6+7+8+9 så fort du kan. Topplistan överlever till och med att batterierna tas ur.',
+    href: 'https://github.com/larsabrasha/fast9',
+  },
+  {
+    name: 'Musik med RFID-kort',
+    text: 'Lägg ett kort med ett skivomslag på läsaren, så börjar skivan spela. Korten skrivs ut från en PDF med omslagen, och en skärm visar vad som spelas.',
+    href: 'https://github.com/larsabrasha/volumio-controller',
+  },
+  {
+    name: 'QR → Spotify',
+    text: 'Skanna en QR-kod och låten spelar, utan att titeln syns. Gjord för ett musikbrädspel. Allt körs i webbläsaren, utan server.',
+    href: 'https://github.com/larsabrasha/qr-spotify',
+  },
+  {
+    name: 'Sensorer i huset',
+    text: 'Små ESP32-enheter i garaget, verkstaden, källaren och andra rum, med temperatur, luftfuktighet och små skärmar, alla kopplade till Home Assistant.',
+    href: 'https://github.com/larsabrasha/esphome',
+  },
+]
