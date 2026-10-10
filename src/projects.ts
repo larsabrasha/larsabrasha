@@ -276,11 +276,6 @@ export const extras: Extra[] = [
     href: 'https://github.com/larsabrasha/volumio-controller',
   },
   {
-    name: 'QR → Spotify',
-    text: 'Skanna en QR-kod och låten spelar, utan att titeln syns. Gjord för ett musikbrädspel. Allt körs i webbläsaren, utan server.',
-    href: 'https://github.com/larsabrasha/qr-spotify',
-  },
-  {
     name: 'Sensorer i huset',
     text: 'Små ESP32-enheter i garaget, verkstaden, källaren och andra rum, med temperatur, luftfuktighet och små skärmar, alla kopplade till Home Assistant.',
     href: 'https://github.com/larsabrasha/esphome',
