@@ -1,5 +1,5 @@
 // The site's pages, rendered to static HTML at build time (src/render.tsx). Nothing here runs in
-// the browser: interactivity is plain HTML (popover) and the small island in src/main.ts.
+// the browser: the only interactivity is plain HTML (popover). The site ships no JavaScript.
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import type { CSSProperties, ReactNode } from 'react'
@@ -34,7 +34,6 @@ function Document(props: { title: string; description: string; path: string; ima
         <meta property="og:url" content={SITE + props.path} />
         <meta property="og:locale" content="sv_SE" />
         <link rel="stylesheet" href="/src/style.css" />
-        <script type="module" src="/src/main.ts" />
       </head>
       <body className="bg-canvas text-ink antialiased">{props.children}</body>
     </html>
@@ -166,17 +165,12 @@ function Tags({ tech }: { tech: string[] }) {
   )
 }
 
-function Buttons({ p, more }: { p: Project; more?: boolean }) {
+function Buttons({ p }: { p: Project }) {
   const base = 'inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition'
   return (
     <div className="flex flex-wrap gap-3">
-      {more && (
-        <a href={`/projekt/${p.id}/`} className={`${base} bg-accent text-on-accent hover:opacity-90`}>
-          Läs mer <span aria-hidden="true">→</span>
-        </a>
-      )}
       {p.live && (
-        <a href={p.live.href} className={`${base} ${more ? 'bg-panel ring-1 ring-line hover:ring-accent' : 'bg-accent text-on-accent hover:opacity-90'}`}>
+        <a href={p.live.href} className={`${base} bg-accent text-on-accent hover:opacity-90`}>
           {p.live.label} <span aria-hidden="true">↗</span>
         </a>
       )}
@@ -189,30 +183,45 @@ function Buttons({ p, more }: { p: Project; more?: boolean }) {
   )
 }
 
+/** One project on the start page: a card with text on one side and the screenshot on the other. */
 function Showcase({ p, index }: { p: Project; index: number }) {
   const cover = p.shots[0]
+  const phones = p.shots.filter((s) => s.frame === 'phone')
   const flip = index % 2 === 1
+  const pill = 'inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition'
+  const secondary = p.live ? { href: p.live.href, label: 'Öppna' } : p.code ? { href: p.code, label: 'Koden' } : undefined
   return (
     <section id={p.id} style={accentStyle(p)} className="reveal mx-auto max-w-6xl px-5 sm:px-8">
-      <div className="grid items-center gap-10 rounded-[2rem] bg-soft p-6 sm:p-10 lg:grid-cols-12 lg:gap-14 lg:p-14">
+      <div className="card-shadow grid items-center gap-10 rounded-[2rem] bg-soft p-6 sm:p-10 lg:grid-cols-12 lg:gap-14 lg:p-14">
         <div className={`lg:col-span-5 ${flip ? 'lg:order-2' : ''}`}>
-          <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-            {String(index + 1).padStart(2, '0')} · {p.kicker}
-          </p>
-          <h3 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">{p.name}</h3>
-          <p className="mt-2 text-lg font-medium text-muted">{p.title}</p>
-          <p className="mt-5 leading-relaxed">{p.summary}</p>
-          {p.id === 'piano' && <div data-island="keyboard" className="mt-6 min-h-[7.5rem]" />}
-          <div className="mt-8">
-            <Buttons p={p} more />
+          <h2 className="text-base font-semibold text-accent">{p.name}</h2>
+          <p className="mt-2 text-4xl leading-[1.08] font-bold tracking-tight sm:text-5xl">{p.headline}</p>
+          <p className="mt-5 text-lg leading-relaxed text-muted">{p.line}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href={`/projekt/${p.id}/`} className={`${pill} bg-accent text-on-accent hover:opacity-90`}>
+              Läs mer <span aria-hidden="true">→</span>
+            </a>
+            {secondary && (
+              <a href={secondary.href} className={`${pill} bg-panel ring-1 ring-line hover:ring-accent`}>
+                {secondary.label} <span aria-hidden="true">↗</span>
+              </a>
+            )}
           </div>
         </div>
         <div className={`lg:col-span-7 ${flip ? 'lg:order-1' : ''}`}>
-          {cover && (
-            <a href={`/projekt/${p.id}/`} className="block transition duration-300 hover:-translate-y-1" aria-label={`Mer om ${p.name}`}>
-              <Frame shot={cover} eager={index === 0} />
-            </a>
-          )}
+          <a href={`/projekt/${p.id}/`} className="block transition duration-300 hover:-translate-y-1" aria-label={`Mer om ${p.name}`} tabIndex={-1}>
+            {cover?.frame === 'phone' && phones.length >= 2 ? (
+              <div className="flex justify-center gap-5 sm:gap-8">
+                {phones.slice(0, 2).map((shot, n) => (
+                  <div key={shot.src} className={`w-1/2 max-w-[15rem] ${n === 1 ? 'mt-10' : ''}`}>
+                    <Frame shot={shot} eager={index === 0} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              cover && <Frame shot={cover} eager={index === 0} />
+            )}
+          </a>
         </div>
       </div>
     </section>
@@ -229,35 +238,22 @@ export function Home() {
     >
       <Header />
       <main>
-        <section className="mx-auto max-w-6xl px-5 pt-12 pb-20 sm:px-8 sm:pt-20 sm:pb-28">
-          <p className="hero-in text-xs font-semibold tracking-[0.2em] text-muted uppercase">Fritidsprojekt</p>
-          <h1 className="hero-in mt-5 max-w-4xl text-5xl leading-[1.02] font-bold tracking-tight sm:text-7xl">
-            Jag bygger saker
-            <br />
-            <span className="hero-gradient">för att det är roligt.</span>
-          </h1>
+        <section className="mx-auto max-w-6xl px-5 pt-12 pb-16 sm:px-8 sm:pt-20 sm:pb-24">
+          <h1 className="hero-in max-w-4xl text-5xl leading-[1.02] font-bold tracking-tight sm:text-7xl">Lite saker jag har byggt.</h1>
           <p className="hero-in mt-8 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">
-            Jag jobbar med att bygga mjukvara. Koden skriver Claude numera, och jag bestämmer vad som ska byggas och hur det ska kännas. På fritiden gör jag samma sak för sådant jag håller på med själv, som snickeri, piano och träning. Här är några av projekten.
+            Jag tycker om att skapa saker. Numera kommer jag med idéer och instruktioner, och sedan kodar Claude.
           </p>
-          <nav className="hero-in mt-10 flex flex-wrap gap-2" aria-label="Projekt">
-            {projects.map((p) => (
-              <a key={p.id} href={`#${p.id}`} style={accentStyle(p)} className="rounded-full bg-soft px-4 py-2 text-sm font-medium text-accent transition hover:-translate-y-0.5">
-                {p.name}
-              </a>
-            ))}
-          </nav>
         </section>
         <h2 id="projekt" className="sr-only">
           Projekt
         </h2>
-        <div className="flex flex-col gap-10 sm:gap-16">
+        <div className="flex flex-col gap-14 sm:gap-20">
           {projects.map((p, i) => (
             <Showcase key={p.id} p={p} index={i} />
           ))}
         </div>
         <section className="mx-auto mt-24 max-w-6xl px-5 sm:px-8">
-          <h2 className="text-3xl font-bold tracking-tight">Annat jag har byggt</h2>
-          <p className="mt-3 text-muted">Mindre saker, mest för hemmet och för skojs skull.</p>
+          <h2 className="text-3xl font-bold tracking-tight">Mindre projekt</h2>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2">
             {extras.map((e) => (
               <li key={e.name} className="reveal">

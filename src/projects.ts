@@ -14,6 +14,9 @@ export interface Project {
   /** One line under the name: what it is. */
   kicker: string
   title: string
+  /** The start page: a short headline and one line under it. */
+  headline: string
+  line: string
   /** Two or three sentences for the start page. */
   summary: string
   /** The longer text on the project's own page, one string per paragraph. */
@@ -38,6 +41,8 @@ export const projects: Project[] = [
     name: 'Bygg',
     kicker: 'Möbelsnickeri i 3D',
     title: 'Rita möbeln, få kaplistan',
+    headline: 'Se möbeln innan du sågar.',
+    line: 'Rita i 3D, få kaplistan och ställ möbeln i rummet med AR.',
     summary:
       'Jag snickrar en del och ville se möbeln innan jag sågar. I Bygg ritar jag delarna i 3D, får ut en kaplista och kan ställa möbeln i rummet med AR innan jag sågar.',
     about: [
@@ -80,6 +85,8 @@ export const projects: Project[] = [
     name: 'Praliner',
     kicker: 'Webbshop',
     title: 'Made by Madde',
+    headline: 'Praliner du kan snurra.',
+    line: 'Beställ från Madde, och spela labyrint med en kompis medan du väntar.',
     summary:
       'Beställningssidan för Maddes praliner. Man väljer smaker, ser priset direkt och skickar beställningen. Pralinerna är ritade i 3D, går att snurra och ställa på bordet med AR, och det finns en labyrint som man kan spela två.',
     about: [
@@ -124,6 +131,8 @@ export const projects: Project[] = [
     name: 'Piano',
     kicker: 'Lär dig spela',
     title: 'Öva piano utan stress',
+    headline: 'Lär dig piano, i din takt.',
+    line: 'Spela på ett vanligt piano. Appen lyssnar och hjälper dig.',
     summary:
       'Jag håller på att lära mig spela piano och byggde en app för det. Den fungerar med MIDI-piano, mikrofon eller datorns tangentbord.',
     about: [
@@ -170,6 +179,8 @@ export const projects: Project[] = [
     name: 'Gospel Presenter',
     kicker: 'För kyrkor',
     title: 'Sångtexter på storbildsskärmen',
+    headline: 'Sångtexterna på storbild.',
+    line: 'Gratis för kyrkor. Styr från mobilen.',
     summary:
       'Ett presentationsprogram för kyrkor, för sångtexter och bibelord under gudstjänsten. Det är gratis och öppen källkod.',
     about: [
@@ -215,6 +226,8 @@ export const projects: Project[] = [
     name: 'Kropp',
     kicker: 'Hälsologg',
     title: 'Min träningslogg',
+    headline: 'Träningsloggen som klarar sig utan nät.',
+    line: 'Logga passen i gymmet, även utan täckning.',
     summary:
       'Här loggar jag mina gympass. Appen ligger på hemskärmen i telefonen och fungerar utan nät.',
     about: [
