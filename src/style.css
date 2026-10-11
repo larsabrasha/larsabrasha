@@ -15,6 +15,8 @@
   --color-accent-soft: color-mix(in oklab, var(--accent) 22%, var(--panel));
   --color-soft: var(--soft);
   --color-on-accent: var(--on-accent);
+  --color-button: var(--button);
+  --color-on-button: #ffffff;
   --shadow-frame: 0 1px 2px rgb(0 0 0 / 0.06), 0 20px 50px -20px rgb(40 30 20 / 0.35);
 }
 
@@ -27,6 +29,8 @@
   --faint: #8a847a;
   --line: #d8d4cc;
   --accent: #2a2724;
+  --accent-light: #2a2724;
+  --button: var(--accent);
   --soft: #e8e5df;
   --on-accent: #ffffff;
   color-scheme: light dark;
@@ -36,6 +40,7 @@
 [style*='--accent-light'] {
   --accent: var(--accent-light);
   --soft: var(--soft-light);
+  --button: var(--accent-light);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -53,6 +58,8 @@
   [style*='--accent-dark'] {
     --accent: var(--accent-dark);
     --soft: var(--soft-dark);
+    /* Buttons keep white text in the dark, on a deeper shade of the project's colour (contrast at least 4.5:1). */
+    --button: color-mix(in oklab, var(--accent-light) 85%, black);
   }
 }
 

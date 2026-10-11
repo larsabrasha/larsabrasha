@@ -123,23 +123,34 @@ function Picture({ shot, eager = false, className }: { shot: Shot; eager?: boole
   )
 }
 
-/** A screenshot in a browser window or a phone. */
-function Frame({ shot, eager, big = false }: { shot: Shot; eager?: boolean; big?: boolean }) {
+/** A screenshot in a browser window, a phone or a tablet. Device corners and bezels are in % of the size, so they look
+ * the same small or large. Bezels follow the real devices: iPhone 15 (71.6 mm wide, 3.3 mm bezel) and iPad Air 11"
+ * (247.6 x 178.5 mm, 10 mm bezel). */
+function Frame({ shot, eager, big = false, bare = false }: { shot: Shot; eager?: boolean; big?: boolean; bare?: boolean }) {
   const shadow = big ? 'card-shadow' : 'shadow-frame'
   if (shot.frame === 'phone')
     return (
-      <div className={`mx-auto max-w-[17rem] rounded-[2.4rem] bg-[#141311] p-2 ring-1 ring-line ${shadow}`}>
-        <div className="overflow-hidden rounded-[1.9rem]">
+      <div className={`mx-auto max-w-[17rem] rounded-[16.8%/7.4%] bg-[#141311] p-[4.5%] ring-1 ring-line ${shadow}`}>
+        <div className="overflow-hidden rounded-[14%/6.5%]">
+          <Picture shot={shot} eager={eager} className="block h-auto w-full" />
+        </div>
+      </div>
+    )
+  if (shot.frame === 'tablet')
+    return (
+      <div className={`rounded-[5.5%/7.6%] bg-[#141311] p-[4.1%] ring-1 ring-line ${shadow}`}>
+        <div className="overflow-hidden rounded-[1.5%/2.2%]">
           <Picture shot={shot} eager={eager} className="block h-auto w-full" />
         </div>
       </div>
     )
   return (
-    <div className={`overflow-hidden rounded-xl border border-line bg-panel ${shadow}`}>
-      <div className="flex gap-1.5 border-b border-line px-3 py-2.5" aria-hidden="true">
-        <span className="size-2.5 rounded-full bg-line" />
-        <span className="size-2.5 rounded-full bg-line" />
-        <span className="size-2.5 rounded-full bg-line" />
+    <div className={`overflow-hidden rounded-[1.2%/1.9%] border border-line bg-panel ${shadow}`}>
+      {/* The title bar scales with the window: 2.4 % of its width high, like a real macOS window. Left out when bare. */}
+      <div className={bare ? 'hidden' : 'flex items-center gap-[0.6%] border-b border-line px-[1.2%] py-[0.75%]'} aria-hidden="true">
+        <span className="aspect-square w-[0.9%] rounded-full bg-line" />
+        <span className="aspect-square w-[0.9%] rounded-full bg-line" />
+        <span className="aspect-square w-[0.9%] rounded-full bg-line" />
       </div>
       <Picture shot={shot} eager={eager} className="block h-auto w-full" />
     </div>
@@ -174,7 +185,7 @@ function Buttons({ p }: { p: Project }) {
   return (
     <div className="flex flex-wrap gap-3">
       {p.live && (
-        <a href={p.live.href} className={`${base} bg-accent text-on-accent hover:opacity-90`}>
+        <a href={p.live.href} className={`${base} bg-button text-on-button ring-white/15 hover:opacity-90 dark:ring-1`}>
           {p.live.label} <span aria-hidden="true">↗</span>
         </a>
       )}
@@ -202,7 +213,7 @@ function Showcase({ p, index }: { p: Project; index: number }) {
           <p className="mt-2 text-4xl leading-[1.08] font-bold tracking-tight sm:text-5xl">{p.headline}</p>
           <p className="mt-5 text-lg leading-relaxed text-muted">{p.line}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href={`/projekt/${p.id}/`} className={`${pill} bg-accent text-on-accent hover:opacity-90`}>
+            <a href={`/projekt/${p.id}/`} className={`${pill} bg-button text-on-button ring-white/15 hover:opacity-90 dark:ring-1`}>
               Läs mer <span aria-hidden="true">→</span>
             </a>
             {secondary && (
@@ -223,7 +234,7 @@ function Showcase({ p, index }: { p: Project; index: number }) {
                 ))}
               </div>
             ) : (
-              cover && <Frame shot={cover} eager={index === 0} />
+              cover && <Frame shot={cover} eager={index === 0} bare />
             )}
           </a>
         </div>
@@ -294,6 +305,50 @@ export function Home() {
   )
 }
 
+/** The two players as one product shot: a big iPad with the iPhone in front of its lower right corner.
+ * The spectator's Mac gets its own small row below. */
+function Devices({ shots }: { shots: Shot[] }) {
+  const mac = shots.find((s) => s.frame === 'browser')
+  const pad = shots.find((s) => s.frame === 'tablet')
+  const phone = shots.find((s) => s.frame === 'phone')
+  const id = (s: Shot) => `enhet-${shots.indexOf(s)}`
+  if (!mac || !pad || !phone)
+    return (
+      <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-8">
+        {shots.map((s) => (
+          <Zoomable key={s.src} shot={s} id={id(s)} />
+        ))}
+      </div>
+    )
+  return (
+    <div className="mt-10">
+      <figure>
+        {/* Real sizes: an iPhone screen is about 29 % as wide as an 11-inch iPad's in landscape. */}
+        <div className="relative mx-auto max-w-4xl pb-[70%]">
+          <div className="absolute top-0 left-[3%] w-[80%]">
+            <Zoomable shot={pad} id={id(pad)} caption={false} />
+          </div>
+          <div className="absolute right-[3%] bottom-0 w-[23%]">
+            <Zoomable shot={phone} id={id(phone)} caption={false} />
+          </div>
+        </div>
+        <figcaption className="mt-6 text-center text-sm text-muted">
+          {pad.caption} · {phone.caption}
+        </figcaption>
+      </figure>
+      <div className="mx-auto mt-14 flex max-w-4xl flex-col items-center gap-6 sm:flex-row sm:gap-10">
+        <div className="w-full max-w-xs sm:w-[42%] sm:max-w-none">
+          <Zoomable shot={mac} id={id(mac)} caption={false} />
+        </div>
+        <div className="sm:flex-1">
+          <h3 className="text-xl font-semibold tracking-tight">Fler kan titta på.</h3>
+          <p className="mt-2 leading-relaxed text-muted">{mac.caption}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function ProjectPage({ p }: { p: Project }) {
   const i = projects.indexOf(p)
   const next = projects[(i + 1) % projects.length]!
@@ -352,13 +407,7 @@ export function ProjectPage({ p }: { p: Project }) {
               <div className="card-shadow rounded-[2rem] bg-soft px-5 py-10 sm:p-14">
                 <h2 className="text-3xl font-bold tracking-tight">{p.trio.title}</h2>
                 <p className="mt-3 max-w-2xl text-lg leading-relaxed text-muted">{p.trio.text}</p>
-                <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-8">
-                  {p.trio.shots.map((shot, n) => (
-                    <div key={shot.src} className="reveal">
-                      <Zoomable shot={shot} id={`trio-${n}`} />
-                    </div>
-                  ))}
-                </div>
+                <Devices shots={p.trio.shots} />
               </div>
             </section>
           )}

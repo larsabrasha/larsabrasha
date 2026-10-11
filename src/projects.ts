@@ -1,6 +1,6 @@
 import type { icons } from 'lucide-react'
 
-export type Frame = 'browser' | 'phone'
+export type Frame = 'browser' | 'phone' | 'tablet'
 
 export interface Shot {
   src: string
@@ -68,7 +68,7 @@ export const projects: Project[] = [
     shots: [
       { src: '/bilder/bygg/01-start.webp', width: 2560, height: 1600, frame: 'browser', caption: 'Startsidan, med ett bord ritat i Bygg' },
       { src: '/bilder/bygg/02-app-dator.webp', width: 2000, height: 1250, frame: 'browser', caption: 'Modellen och egenskaperna för den valda delen' },
-      { src: '/bilder/bygg/03-app-mobil.webp', width: 700, height: 1515, frame: 'phone', caption: 'Samma modell i mobilen' },
+      { src: '/bilder/bygg/03-app-mobil.webp', width: 780, height: 1688, frame: 'phone', caption: 'Samma modell i mobilen' },
     ],
   },
   {
@@ -99,6 +99,15 @@ export const projects: Project[] = [
     accentDark: '#e0b393',
     soft: '#f6e6d7',
     softDark: '#2c1d16',
+    trio: {
+      title: 'Två spelar, en tittar på',
+      text: 'Samma bana, samma sekund. Nötis och Hallonet letar praliner tillsammans, den ena på iPad och den andra på iPhone. Enheterna pratar direkt med varandra.',
+      shots: [
+        { src: '/bilder/praliner/07-labyrint-spelare1.webp', width: 780, height: 1688, frame: 'phone', caption: 'Spelare 1 på iPhone' },
+        { src: '/bilder/praliner/08-labyrint-spelare2.webp', width: 2360, height: 1640, frame: 'tablet', caption: 'Spelare 2 på iPad' },
+        { src: '/bilder/praliner/09-labyrint-tittare.webp', width: 2880, height: 1800, frame: 'browser', caption: 'Den som tittar på ser hela banan ovanifrån, till exempel på en Mac, och kan följa en spelare i taget.' },
+      ],
+    },
     shots: [
       { src: '/bilder/praliner/01-start.webp', width: 2560, height: 1600, frame: 'browser', caption: 'Startsidan, i samma stil som affischen' },
       { src: '/bilder/praliner/02-smaker.webp', width: 2560, height: 1600, frame: 'browser', caption: 'Smakerna, varje pralin med eget mönster' },
