@@ -3,7 +3,22 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import type { CSSProperties, ReactNode } from 'react'
-import { extras, projects, type Project, type Shot } from './projects.ts'
+import { Calculator, Disc3, Thermometer, icons, type LucideProps } from 'lucide-react'
+import { extras, projects, type Extra, type Project, type Shot } from './projects.ts'
+
+// Rendered to inline SVG at build time, so the icons cost no JavaScript.
+const ICONS: Record<Extra['icon'], (props: LucideProps) => ReactNode> = { weight: BathroomScale, calculator: Calculator, disc: Disc3, thermometer: Thermometer }
+
+/** Lucide has no bathroom scale, so this one is drawn in the same style. */
+function BathroomScale({ size = 24, strokeWidth = 2, ...rest }: LucideProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...rest}>
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <path d="M8.5 9.5a5 5 0 0 1 7 0" />
+      <path d="m12 10.5 1.2-1.7" />
+    </svg>
+  )
+}
 
 const SITE = 'https://larsabrasha.com'
 
@@ -109,17 +124,18 @@ function Picture({ shot, eager = false, className }: { shot: Shot; eager?: boole
 }
 
 /** A screenshot in a browser window or a phone. */
-function Frame({ shot, eager }: { shot: Shot; eager?: boolean }) {
+function Frame({ shot, eager, big = false }: { shot: Shot; eager?: boolean; big?: boolean }) {
+  const shadow = big ? 'card-shadow' : 'shadow-frame'
   if (shot.frame === 'phone')
     return (
-      <div className="mx-auto max-w-[17rem] rounded-[2.4rem] bg-[#141311] p-2 shadow-frame ring-1 ring-line">
+      <div className={`mx-auto max-w-[17rem] rounded-[2.4rem] bg-[#141311] p-2 ring-1 ring-line ${shadow}`}>
         <div className="overflow-hidden rounded-[1.9rem]">
           <Picture shot={shot} eager={eager} className="block h-auto w-full" />
         </div>
       </div>
     )
   return (
-    <div className="overflow-hidden rounded-xl border border-line bg-panel shadow-frame">
+    <div className={`overflow-hidden rounded-xl border border-line bg-panel ${shadow}`}>
       <div className="flex gap-1.5 border-b border-line px-3 py-2.5" aria-hidden="true">
         <span className="size-2.5 rounded-full bg-line" />
         <span className="size-2.5 rounded-full bg-line" />
@@ -131,7 +147,7 @@ function Frame({ shot, eager }: { shot: Shot; eager?: boolean }) {
 }
 
 /** A framed screenshot with a caption and a popover that shows it large. */
-function Zoomable({ shot, id, eager }: { shot: Shot; id: string; eager?: boolean }) {
+function Zoomable({ shot, id, eager, caption = true, big = false }: { shot: Shot; id: string; eager?: boolean; caption?: boolean; big?: boolean }) {
   return (
     <figure className="group">
       <button
@@ -140,9 +156,9 @@ function Zoomable({ shot, id, eager }: { shot: Shot; id: string; eager?: boolean
         className="block w-full cursor-zoom-in text-left transition duration-300 group-hover:-translate-y-1"
         aria-label={`Visa större: ${shot.caption}`}
       >
-        <Frame shot={shot} eager={eager} />
+        <Frame shot={shot} eager={eager} big={big} />
       </button>
-      <figcaption className="mt-3 text-sm text-muted">{shot.caption}</figcaption>
+      {caption && <figcaption className="mt-3 text-sm text-muted">{shot.caption}</figcaption>}
       <div id={id} popover="auto" className="lightbox">
         <button type="button" popoverTarget={id} popoverTargetAction="hide" className="block cursor-zoom-out" aria-label="Stäng">
           <Picture shot={shot} className="lightbox-img" />
@@ -150,18 +166,6 @@ function Zoomable({ shot, id, eager }: { shot: Shot; id: string; eager?: boolean
         <p className="mt-3 text-center text-sm text-white/80">{shot.caption}</p>
       </div>
     </figure>
-  )
-}
-
-function Tags({ tech }: { tech: string[] }) {
-  return (
-    <ul className="flex flex-wrap gap-2" aria-label="Teknik">
-      {tech.map((t) => (
-        <li key={t} className="rounded-full border border-line px-3 py-1 text-xs text-muted">
-          {t}
-        </li>
-      ))}
-    </ul>
   )
 }
 
@@ -228,6 +232,15 @@ function Showcase({ p, index }: { p: Project; index: number }) {
   )
 }
 
+function ExtraIcon({ icon }: { icon: Extra['icon'] }) {
+  const Icon = ICONS[icon]
+  return (
+    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-canvas text-ink ring-1 ring-line">
+      <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+    </span>
+  )
+}
+
 export function Home() {
   return (
     <Document
@@ -258,8 +271,11 @@ export function Home() {
             {extras.map((e) => (
               <li key={e.name} className="reveal">
                 <a href={e.href} className="group flex h-full flex-col rounded-2xl border border-line bg-panel p-6 transition hover:-translate-y-1 hover:border-ink/30">
-                  <span className="flex items-baseline justify-between gap-3 font-semibold tracking-tight">
-                    {e.name}
+                  <span className="flex items-center justify-between gap-3 font-semibold tracking-tight">
+                    <span className="flex items-center gap-3">
+                      <ExtraIcon icon={e.icon} />
+                      {e.name}
+                    </span>
                     {e.href && (
                       <span className="text-muted transition group-hover:text-ink" aria-hidden="true">
                         ↗
@@ -284,15 +300,16 @@ export function ProjectPage({ p }: { p: Project }) {
   const [cover, ...rest] = p.shots
   const wide = rest.filter((s) => s.frame === 'browser')
   const phones = rest.filter((s) => s.frame === 'phone')
+  const nextCover = next.shots[0]
   return (
-    <Document title={`${p.name} – ${p.title} · Lars Arvidsson`} description={p.summary} path={`/projekt/${p.id}/`} image={cover?.src ?? '/bilder/bygg/01-start.webp'}>
+    <Document title={`${p.name} – ${p.headline} · Lars Arvidsson`} description={p.summary} path={`/projekt/${p.id}/`} image={cover?.src ?? '/bilder/bygg/01-start.webp'}>
       <div style={accentStyle(p)}>
         <Header back />
         <main>
           <section className="mx-auto max-w-6xl px-5 pt-10 sm:px-8 sm:pt-16">
-            <p className="hero-in text-xs font-semibold tracking-[0.2em] text-accent uppercase">{p.kicker}</p>
-            <h1 className="hero-in mt-4 text-5xl font-bold tracking-tight sm:text-7xl">{p.name}</h1>
-            <p className="hero-in mt-3 text-xl text-muted sm:text-2xl">{p.title}</p>
+            <p className="hero-in text-lg font-semibold text-accent">{p.name}</p>
+            <h1 className="hero-in mt-2 max-w-4xl text-5xl leading-[1.04] font-bold tracking-tight sm:text-7xl">{p.headline}</h1>
+            <p className="hero-in mt-5 max-w-2xl text-xl leading-relaxed text-muted">{p.line}</p>
             <div className="hero-in mt-8">
               <Buttons p={p} />
             </div>
@@ -300,49 +317,51 @@ export function ProjectPage({ p }: { p: Project }) {
 
           {cover && (
             <section className="mx-auto mt-14 max-w-6xl px-5 sm:px-8">
-              <div className="rounded-[2rem] bg-soft p-4 sm:p-10">
-                <Zoomable shot={cover} id="bild-0" eager />
-              </div>
+              <Zoomable shot={cover} id="bild-0" eager caption={false} big />
             </section>
           )}
 
-          <section className="mx-auto mt-16 grid max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-12">
-            <div className="space-y-5 text-lg leading-relaxed lg:col-span-7">
+          <section className="mx-auto mt-16 max-w-6xl px-5 sm:px-8">
+            <div className="max-w-2xl space-y-5 text-lg leading-relaxed">
               {p.about.map((text) => (
                 <p key={text}>{text}</p>
               ))}
             </div>
-            <aside className="lg:col-span-5">
-              <div className="rounded-2xl border border-line bg-panel p-6 sm:p-8">
-                <h2 className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">Höjdpunkter</h2>
-                <ul className="mt-5 space-y-3">
-                  {p.highlights.map((h) => (
-                    <li key={h} className="flex gap-3">
-                      <span className="mt-2 size-2 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-                      {h}
-                    </li>
-                  ))}
-                </ul>
-                <h2 className="mt-8 text-xs font-semibold tracking-[0.2em] text-accent uppercase">Byggt med</h2>
-                <div className="mt-4">
-                  <Tags tech={p.tech} />
-                </div>
-              </div>
-            </aside>
           </section>
 
           <section className="mx-auto mt-20 max-w-6xl px-5 sm:px-8">
             <h2 className="text-3xl font-bold tracking-tight">Det roliga under huven</h2>
             <div className="mt-8 grid gap-5 sm:grid-cols-2">
-              {p.cool.map((c, n) => (
-                <div key={c.title} className="reveal rounded-2xl bg-soft p-6 sm:p-8">
-                  <p className="font-mono text-sm text-accent">{String(n + 1).padStart(2, '0')}</p>
-                  <h3 className="mt-2 text-xl font-semibold tracking-tight">{c.title}</h3>
-                  <p className="mt-3 leading-relaxed text-ink/85">{c.text}</p>
-                </div>
-              ))}
+              {p.cool.map((c) => {
+                const Icon = icons[c.icon]
+                return (
+                  <div key={c.title} className="reveal rounded-2xl bg-soft p-6 sm:p-8">
+                    <span className="grid size-11 place-items-center rounded-xl bg-panel text-accent ring-1 ring-line">
+                      <Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+                    </span>
+                    <h3 className="mt-4 text-xl font-semibold tracking-tight">{c.title}</h3>
+                    <p className="mt-2 leading-relaxed text-ink/85">{c.text}</p>
+                  </div>
+                )
+              })}
             </div>
           </section>
+
+          {p.trio && (
+            <section className="mx-auto mt-20 max-w-6xl px-5 sm:px-8">
+              <div className="card-shadow rounded-[2rem] bg-soft px-5 py-10 sm:p-14">
+                <h2 className="text-3xl font-bold tracking-tight">{p.trio.title}</h2>
+                <p className="mt-3 max-w-2xl text-lg leading-relaxed text-muted">{p.trio.text}</p>
+                <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-8">
+                  {p.trio.shots.map((shot, n) => (
+                    <div key={shot.src} className="reveal">
+                      <Zoomable shot={shot} id={`trio-${n}`} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
           {rest.length > 0 && (
             <section className="mx-auto mt-20 max-w-6xl px-5 sm:px-8">
@@ -368,16 +387,24 @@ export function ProjectPage({ p }: { p: Project }) {
             </section>
           )}
 
-          <section className="mx-auto mt-24 max-w-6xl px-5 sm:px-8">
-            <a href={`/projekt/${next.id}/`} style={accentStyle(next)} className="group flex items-center justify-between rounded-[2rem] bg-soft p-8 transition hover:-translate-y-1 sm:p-12">
+          <section className="mx-auto mt-16 max-w-6xl px-5 sm:px-8">
+            <p className="text-sm text-muted">Byggt med {p.tech.join(', ')}.</p>
+          </section>
+
+          <section className="mx-auto mt-16 max-w-6xl px-5 sm:px-8">
+            <a href={`/projekt/${next.id}/`} style={accentStyle(next)} className="card-shadow group grid items-center gap-8 overflow-hidden rounded-[2rem] bg-soft p-8 transition hover:-translate-y-1 sm:grid-cols-2 sm:p-12">
               <span>
-                <span className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">Nästa projekt</span>
-                <span className="mt-2 block text-3xl font-bold tracking-tight sm:text-4xl">{next.name}</span>
-                <span className="mt-1 block text-muted">{next.title}</span>
+                <span className="text-base font-semibold text-accent">Nästa: {next.name}</span>
+                <span className="mt-2 block text-3xl leading-tight font-bold tracking-tight sm:text-4xl">{next.headline}</span>
+                <span className="mt-4 inline-block text-2xl text-accent transition group-hover:translate-x-2" aria-hidden="true">
+                  →
+                </span>
               </span>
-              <span className="text-4xl text-accent transition group-hover:translate-x-2" aria-hidden="true">
-                →
-              </span>
+              {nextCover && (
+                <span className={`block ${nextCover.frame === 'phone' ? 'mx-auto w-40' : ''}`}>
+                  <Frame shot={nextCover} />
+                </span>
+              )}
             </a>
           </section>
         </main>

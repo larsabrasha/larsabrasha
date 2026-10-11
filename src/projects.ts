@@ -1,3 +1,5 @@
+import type { icons } from 'lucide-react'
+
 export type Frame = 'browser' | 'phone'
 
 export interface Shot {
@@ -11,9 +13,6 @@ export interface Shot {
 export interface Project {
   id: string
   name: string
-  /** One line under the name: what it is. */
-  kicker: string
-  title: string
   /** The start page: a short headline and one line under it. */
   headline: string
   line: string
@@ -21,9 +20,8 @@ export interface Project {
   summary: string
   /** The longer text on the project's own page, one string per paragraph. */
   about: string[]
-  highlights: string[]
   /** The fun parts under the hood, for the project's own page. */
-  cool: { title: string; text: string }[]
+  cool: { icon: keyof typeof icons; title: string; text: string }[]
   tech: string[]
   live?: { href: string; label: string }
   code?: string
@@ -33,14 +31,14 @@ export interface Project {
   soft: string
   softDark: string
   shots: Shot[]
+  /** Optional: three phones side by side, e.g. two players and a spectator. */
+  trio?: { title: string; text: string; shots: Shot[] }
 }
 
 export const projects: Project[] = [
   {
     id: 'bygg',
     name: 'Bygg',
-    kicker: 'Möbelsnickeri i 3D',
-    title: 'Rita möbeln, få kaplistan',
     headline: 'Se möbeln innan du sågar.',
     line: 'Rita i 3D, få kaplistan och ställ möbeln i rummet med AR.',
     summary:
@@ -50,22 +48,15 @@ export const projects: Project[] = [
       'Ur modellen räknar Bygg fram kaplistan och en sågplan, alltså hur delarna kan placeras på brädorna. Modellerna sparas i webbläsaren och synkas med en server jag kör själv, så appen fungerar även utan nät.',
       'Det finns också ett kommandoradsverktyg, mest för att Claude ska kunna rita åt mig. Har jag appen öppen samtidigt ser jag ändringarna dyka upp direkt.',
     ],
-    highlights: [
-      'Ställ möbeln i rummet med AR, eller gå runt den i VR',
-      'Tappar och tapphål räknas ut och skärs automatiskt',
-      'Sågplan med svenska virkesmått, som går att följa på en bordssåg',
-      'Ritningar som PDF i rätt skala',
-      'Claude kan rita möbler åt mig via ett CLI',
-    ],
     cool: [
-      { title: 'Ställ möbeln i rummet', text: 'På iPhone och iPad kan man placera möbeln i verklig storlek i sitt eget rum med AR. Appen gör om modellen till en 3D-fil som Apples AR-visare öppnar, med träet och tapparna på plats. Då ser man direkt om bordet får plats.' },
-      { title: 'Gå runt den i VR', text: 'Med ett VR-headset står man bredvid möbeln i skala 1:1. Man går med styrspaken och har en meny med sifferknappar som svävar i luften.' },
-      { title: 'Tappar som alltid passar', text: 'Välj en sarg och benet den ska sitta i, så räknar Bygg ut tappen efter snickarnas tumregel, en tredjedel av virkets tjocklek. Tappen läggs på den ena delen och skärs ut ur den andra med exakt samma form. Själva utskärningen görs av en geometrimotor i WebAssembly.' },
-      { title: 'Sågplan för en riktig såg', text: 'Delarna packas på brädor och skivor i mått man kan köpa i Sverige. Planen tar hänsyn till 3 mm sågsnitt och fiberriktning, och den består bara av raka genomgående snitt, så att den går att följa på en bordssåg.' },
-      { title: 'Ritningar att skriva ut', text: 'Ur modellen blir det riktiga ritningsblad: huvudvyer, en sprängskiss med numrerade delar och ett blad per del med mått. PDF:en byggs i webbläsaren med ett A4 per blad, så att skalan stämmer på papperet.' },
-      { title: 'Trä från riktiga foton', text: 'Ek, furu, björk och de andra träslagen bygger på foton. Ett skript tvättar bort ljuset, färgar om dem och räknar fram ådringen som en relief i ytan. Ändträet blir mörkare, precis som på riktigt.' },
-      { title: 'Claude som snickare', text: 'Med kommandoradsverktyget kan Claude rita åt mig, till exempel "gör ett bord 120 × 80". Om appen är öppen skickar servern ändringen direkt, så att jag ser bordet växa fram på skärmen.' },
-      { title: 'Ingenting skrivs över', text: 'Har jag ändrat samma modell på två enheter utan nät sparas båda versionerna, den ena som en konfliktkopia. Inget försvinner i tysthet.' },
+      { icon: 'Box', title: 'Ställ möbeln i rummet', text: 'På iPhone och iPad kan man ställa möbeln i rummet i verklig storlek, med trä och tappar. Då ser man direkt om bordet får plats.' },
+      { icon: 'Glasses', title: 'Gå runt den i VR', text: 'Med ett VR-headset står man bredvid möbeln i full storlek. Man går runt med styrspaken, och menyn svävar i luften.' },
+      { icon: 'Terminal', title: 'Claude som snickare', text: 'Med kommandoradsverktyget kan Claude rita åt mig, till exempel "gör ett bord 120 × 80". Om appen är öppen skickar servern ändringen direkt, så att jag ser bordet växa fram på skärmen.' },
+      { icon: 'Puzzle', title: 'Tappar som alltid passar', text: 'Välj en sarg och benet den ska sitta i. Bygg räknar ut tappen med snickarnas tumregel och skär ut ett hål med exakt samma form i benet.' },
+      { icon: 'LayoutGrid', title: 'Sågplan för en riktig såg', text: 'Bygg lägger ut delarna på brädor och skivor som går att köpa i Sverige. Planen räknar med sågsnittet och har bara raka snitt, så den går att följa på en bordssåg.' },
+      { icon: 'FileText', title: 'Ritningar att skriva ut', text: 'Bygg gör ritningar av modellen: hela möbeln, en sprängskiss och ett blad per del med alla mått. Skriv ut, så stämmer skalan.' },
+      { icon: 'TreePine', title: 'Trä från riktiga foton', text: 'Träslagen bygger på riktiga foton. Ett skript tar bort ljuset från fotot och gör ådringen till en liten relief i ytan. Ändträet blir mörkare.' },
+      { icon: 'GitMerge', title: 'Ingenting skrivs över', text: 'Har jag ändrat samma modell på två enheter utan nät, sparas båda versionerna. Ingen ändring försvinner.' },
     ],
     tech: ['React', 'Three.js', 'TypeScript', 'Tailwind', 'WebXR', 'WebAssembly', 'Hono', 'PWA', 'Docker'],
     live: { href: 'https://bygg.larsabrasha.com', label: 'Öppna Bygg' },
@@ -83,8 +74,6 @@ export const projects: Project[] = [
   {
     id: 'praliner',
     name: 'Praliner',
-    kicker: 'Webbshop',
-    title: 'Made by Madde',
     headline: 'Praliner du kan snurra.',
     line: 'Beställ från Madde, och spela labyrint med en kompis medan du väntar.',
     summary:
@@ -94,22 +83,15 @@ export const projects: Project[] = [
       'Utseendet bygger på hennes affisch. Pralinerna är inga foton. De ritas i 3D i webbläsaren, och mönstren är gjorda för att likna de riktiga.',
       'Jag kunde inte låta bli att lägga till ett memory, en labyrint och ett läge där man målar en egen pralin och delar den med en länk. Madde kan också ändra sortiment och priser genom att prata med Claude eller ChatGPT. Sajten har en MCP-server för det.',
     ],
-    highlights: [
-      'Labyrint för två spelare, telefon mot telefon',
-      'Ställ en pralin på bordet med AR',
-      'Praliner ritade av kod, som går att snurra och luta',
-      'Madde sköter butiken genom att chatta med Claude eller ChatGPT',
-      'Tolv hemliga praliner att leta efter',
-    ],
     cool: [
-      { title: 'Labyrint för två', text: 'Pralinlabyrinten är ett 3D-spel där man letar praliner, ensam eller två tillsammans. Man bjuder in med en kod, en QR-kod eller en länk, och telefonerna pratar sedan direkt med varandra över WebRTC. Servern hjälper bara till att koppla ihop dem, och fler kan titta på.' },
-      { title: 'Ett helt äventyr', text: 'Det finns fem banor på en världskarta. Den stora banan är en pralinask som låses upp när de fyra små är klarade: kedjorna faller och hänglåset går upp. Klarar man den blir det fyrverkeri, fanfar och eftertexter. Ljudet görs i webbläsaren, och telefonen vibrerar när man plockar upp något.' },
-      { title: 'En pralin på ditt bord', text: 'På iPhone kan man ställa en pralin i verklig storlek på bordet med AR. 3D-filen tillverkas direkt i webbläsaren av samma form och mönster, så det fungerar även med en pralin man har målat själv.' },
-      { title: 'Snurra och luta', text: 'Man kan dra i pralinen för att snurra den åt alla håll, och släpper man med fart snurrar den vidare. Med "Luta" följer ljuset hur man håller telefonen, så att reflexerna glider över chokladen som om man höll pralinen i handen.' },
-      { title: 'Ritade av kod', text: 'Pralinerna är inga 3D-modeller gjorda för hand. Formen är en matematisk kurva som snurras runt en axel, som på en svarv. Mönster och stänk målas av kod i en bakgrundstråd, så att sidan inte hackar.' },
-      { title: 'Måla och dela', text: 'Man väljer choklad, färg och fyllning och trycker för att stänka. Hela pralinen sparas i länken, och delar man den i Messenger eller iMessage syns en bild av just den pralinen.' },
-      { title: 'Hemlig pralinjakt', text: 'Tolv praliner är gömda i butiken. De hittas genom att till exempel trycka på bokstäverna i PRALINER, snurra en pralin tio varv eller skaka telefonen. Hittar man alla syns det på beställningen som Madde får.' },
-      { title: 'Butiken i en AI-chatt', text: 'Madde kan skriva "Hallonkolan är slut" till Claude eller ChatGPT, även i mobilen, och butiken uppdateras. Det går via en egen MCP-server med inloggning. AI:n visar ändringen först, och allt går att ångra i historiken.' },
+      { icon: 'Users', title: 'Labyrint för två', text: 'Pralinlabyrinten är ett 3D-spel där man letar praliner, själv eller med en kompis. Man bjuder in med en kod eller en länk, och sedan pratar telefonerna direkt med varandra. Fler kan titta på.' },
+      { icon: 'Box', title: 'En pralin på ditt bord', text: 'På iPhone kan man ställa en pralin i verklig storlek på bordet. Det fungerar även med en pralin man har målat själv.' },
+      { icon: 'Rotate3d', title: 'Snurra och luta', text: 'Dra i pralinen för att snurra den. Släpper man med fart snurrar den vidare. Med "Luta" följer ljuset hur man håller telefonen, så att reflexerna glider över chokladen.' },
+      { icon: 'Search', title: 'Hemlig pralinjakt', text: 'Tolv praliner är gömda i butiken. Man hittar dem till exempel genom att trycka på bokstäverna i PRALINER, snurra en pralin tio varv eller skaka telefonen.' },
+      { icon: 'MessageCircle', title: 'Butiken i en AI-chatt', text: 'Madde kan skriva "Hallonkolan är slut" till Claude eller ChatGPT, så uppdateras butiken. AI:n visar ändringen först, och allt går att ångra.' },
+      { icon: 'Paintbrush', title: 'Måla och dela', text: 'Välj choklad, färg och fyllning och tryck för att stänka. Hela pralinen sparas i länken, och i Messenger och iMessage syns en bild av just den pralinen.' },
+      { icon: 'Map', title: 'Ett helt äventyr', text: 'Fem banor ligger på en världskarta. Den sista är en pralinask som låses upp när de fyra andra är klara. Klarar man den blir det fyrverkeri och eftertexter, och telefonen vibrerar när man plockar upp något.' },
+      { icon: 'Code', title: 'Ritade av kod', text: 'Pralinerna är inte modellerade för hand. Formen är en matematisk kurva som snurras runt, som på en svarv, och mönstren målas av kod.' },
     ],
     tech: ['React', 'Three.js', 'TypeScript', 'Tailwind', 'WebRTC', 'Cloudflare Workers', 'D1', 'MCP'],
     live: { href: 'https://praliner.larsabrasha.com', label: 'Öppna butiken' },
@@ -129,8 +111,6 @@ export const projects: Project[] = [
   {
     id: 'piano',
     name: 'Piano',
-    kicker: 'Lär dig spela',
-    title: 'Öva piano utan stress',
     headline: 'Lär dig piano, i din takt.',
     line: 'Spela på ett vanligt piano. Appen lyssnar och hjälper dig.',
     summary:
@@ -140,23 +120,16 @@ export const projects: Project[] = [
       'Det finns fyra kurser, ungefär som böckerna i en pianoskola: komma igång med mitt-C, kompa till sång, melodi och noter, och att spela efter gehör. Man kan också lägga in en egen MIDI-fil eller ett ackordschema. Då letar appen upp tonart, ackord och fraser och gör lektioner av låten, först en hand i taget och långsamt.',
       'Med ett vanligt akustiskt piano lyssnar appen genom mikrofonen. Efter ett försök visar den vilka takter som var svårast och låter en öva bara dem, lite långsammare, tills de går tre gånger i rad.',
     ],
-    highlights: [
-      'Styr appen från pianot, med ackord som meny',
-      'Lyssnar på ett vanligt piano och lär sig dess stämning',
-      'MIDI-filer, ackordscheman och notfoton blir lektioner',
-      'Fingersättning som stämmer till 84 % med Diabelli',
-      'Inga streaks eller poäng att jaga',
-    ],
     cool: [
-      { title: 'Hör ett vanligt piano', text: 'Utan MIDI-kabel lyssnar appen genom mikrofonen och hör både enstaka toner och ackord. Tonigenkänningen är skriven från grunden för pianot, utan något färdigt bibliotek.' },
-      { title: 'Lär sig ditt piano', text: 'En kort kalibrering mäter rummets brus, pianots stämning och, om man vill, varje tangent för sig. Sedan ritar appen en klaviatur som visar vilka tangenter som är ostämda. Den räknar också med att riktiga pianosträngar har övertoner som inte är helt rena.' },
-      { title: 'Skiljer dig från sig själv', text: 'När appen spelar med måste den veta vilka toner som är dina. Den vet vad den själv spelar och när, och en ton räknas bara om den hörs tydligt starkare än appens ljud.' },
-      { title: 'Styr appen med pianot', text: 'Man kan navigera utan att röra datorn. Vita tangenter betyder OK eller tillbaka, och ett ackord öppnar en sida: C är Idag, Dm är Kurser. Pedalen är OK och pitch bend ändrar tempot. Lägger man hela handflatan på tangenterna pausar appen.' },
-      { title: 'Fingersättning som en lärare', text: 'Appen räknar ut vilket finger som ska ta varje ton. Den utgår från tabeller ur pianoskolor och använder annars en modell från forskningen. Mot Diabellis Op. 149 stämmer 84 % av fingrarna med den tryckta utgåvan.' },
-      { title: 'Låtar blir lektioner', text: 'Ge appen en MIDI-fil, ett ackordschema eller noter, eller spela in låten själv. Den hittar tonarten med en metod från musikpsykologin, letar upp ackord och fraser som upprepas och bygger lektioner. För ackord väljer den grepp där handen behöver flytta sig så lite som möjligt.' },
-      { title: 'Noter från ett foto', text: 'Med en Claude-skill kan ett foto eller en PDF av ett notblad bli en låt i appen. Noterna blir gröna eller röda när man spelar, och i läget Utantill bleknar de bort.' },
-      { title: 'Övar det som är svårt', text: 'Efter ett försök loopar appen de takter som gick sämst, lite långsammare, tills de går rent tre gånger i rad. På startsidan dyker gamla låtar upp för repetition med jämna mellanrum.' },
-      { title: 'En flygel som fungerar offline', text: 'Ljudet är en samplad flygel. Efter första besöket fungerar appen helt utan nät. Svarstiden mäts automatiskt, även på en dator som är bromsad till en sjättedel av farten, och målet är att återkopplingen kommer inom en bildruta.' },
+      { icon: 'Piano', title: 'Styr appen med pianot', text: 'Man kan styra appen utan att röra datorn. Ett ackord öppnar en sida, till exempel C för Idag och Dm för Kurser. Pedalen betyder OK, och lägger man hela handen på tangenterna pausar appen.' },
+      { icon: 'Mic', title: 'Hör ett vanligt piano', text: 'Utan MIDI-kabel lyssnar appen genom mikrofonen och hör både toner och ackord. Tonigenkänningen är skriven från grunden, utan färdigt bibliotek.' },
+      { icon: 'Camera', title: 'Noter från ett foto', text: 'Med en Claude-skill blir ett foto av ett notblad en låt i appen. Noterna blir gröna eller röda när man spelar, och i läget Utantill bleknar de bort.' },
+      { icon: 'ListMusic', title: 'Låtar blir lektioner', text: 'Ge appen en MIDI-fil, ett ackordschema eller noter, eller spela in låten själv. Appen hittar tonart, ackord och fraser som upprepas, och gör lektioner av låten.' },
+      { icon: 'Hand', title: 'Fingersättning som en lärare', text: 'Appen räknar ut vilket finger som ska ta varje ton, med tabeller från pianoskolor och en modell från forskningen. I Diabellis Op. 149 stämmer 84 % av fingrarna med den tryckta utgåvan.' },
+      { icon: 'AudioLines', title: 'Vet vad som är du', text: 'När appen spelar med måste den veta vilka toner som är dina. En ton räknas bara om den hörs tydligt över appens eget ljud.' },
+      { icon: 'SlidersHorizontal', title: 'Lär sig ditt piano', text: 'En kort kalibrering lyssnar på rummet och pianot, gärna tangent för tangent. Sedan visar appen vilka tangenter som är ostämda.' },
+      { icon: 'Repeat', title: 'Övar det som är svårt', text: 'Efter ett försök övar appen på takterna som gick sämst, lite långsammare, tills de går rent tre gånger i rad. Gamla låtar dyker upp igen ibland, så att man inte glömmer dem.' },
+      { icon: 'WifiOff', title: 'En flygel som fungerar offline', text: 'Ljudet är en inspelad flygel, och appen fungerar utan nät efter första besöket. Svarstiden testas automatiskt, även på en långsam dator.' },
     ],
     tech: ['React', 'TypeScript', 'Tailwind', 'Web MIDI', 'Web Audio', 'PWA', 'Cloudflare'],
     live: { href: 'https://piano.larsabrasha.com', label: 'Öppna Piano' },
@@ -177,8 +150,6 @@ export const projects: Project[] = [
   {
     id: 'gospelpresenter',
     name: 'Gospel Presenter',
-    kicker: 'För kyrkor',
-    title: 'Sångtexter på storbildsskärmen',
     headline: 'Sångtexterna på storbild.',
     line: 'Gratis för kyrkor. Styr från mobilen.',
     summary:
@@ -188,22 +159,15 @@ export const projects: Project[] = [
       'En presentation kan blanda sånger, bibeltexter, bilder och slides från PowerPoint eller PDF. Den visas på projektorn och kan styras från mobilen. Ändringar syns direkt på alla anslutna skärmar. Den som leder lovsången har ett eget scenläge som också visar nästa bild.',
       'Sångerna ligger i ett bibliotek med versionshistorik och kan importeras från ProPresenter. Appen sparar också vilka sånger som visats, vilket gör CCLI-rapporten enklare.',
     ],
-    highlights: [
-      'Församlingen följer sångtexten i mobilen via en QR-kod',
-      'Styr presentationen från mobilen',
-      'Datorprogrammet fortsätter som vanligt om nätet dör mitt i gudstjänsten',
-      'Läser ProPresenter-filer direkt',
-      'CCLI-rapporten fyller sig själv',
-    ],
     cool: [
-      { title: 'Sångtexten i mobilen', text: 'Vem som helst i kyrkan kan skanna en QR-kod och följa texten i mobilen, utan konto. Sidan är byggd för att en hel församling på samma wifi ska fungera, även när telefonerna släcker skärmen och kopplar upp sig igen.' },
-      { title: 'Mobilen som fjärrkontroll', text: 'Presentationen kan styras från mobilen, och en projektor ansluts med en kod på sex tecken. Kommandona säger alltid exakt var man ska vara, till exempel "sång 2, del 3" och aldrig bara "nästa". Ett meddelande som kommer fram två gånger hamnar då ändå rätt.' },
-      { title: 'Klarar att nätet dör', text: 'Datorprogrammet har en egen databas och synkar när nätet finns. Om routern startar om mitt i gudstjänsten händer ingenting på skärmen.' },
-      { title: 'Hittar projektorn själv', text: 'Programmet för datorn är samma Blazor-gränssnitt i Electron. Bilden till projektorn öppnas direkt på den andra skärmen. Först byggdes en Mac Catalyst-version, men den visade sig bara se en skärm, och därför blev det Electron.' },
-      { title: 'Läser ProPresenter-filer', text: 'Sånger från ProPresenter 7 läses direkt ur deras binära filformat, med text och CCLI-uppgifter. PowerPoint görs om till PDF, och varje sida i en PDF blir en bild i presentationen.' },
-      { title: 'CCLI-rapporten fyller sig själv', text: 'Varje sång som visas loggas automatiskt för kyrkans licensrapport. Det gäller även sånger som visas utan nät: de sparas med rätt datum och skickas senare utan att räknas två gånger.' },
-      { title: 'Bibeln på ett ögonblick', text: 'Skriv "Matt 3:15-4:6" eller bara "ma", så kommer verserna upp. Sökningen förstår svenska boknamn och avsnitt som går över kapitelgränser.' },
-      { title: 'Skärmdumpar på löpande band', text: 'Ett verktyg tar skärmdumpar av varje kombination av språk, ljust och mörkt läge och skärmstorlek till webbplatsen. Det är samma bilder som syns här.' },
+      { icon: 'Smartphone', title: 'Sångtexten i mobilen', text: 'Vem som helst i kyrkan kan skanna en QR-kod och följa texten i mobilen, utan konto. Det fungerar även när en hel församling är på samma wifi.' },
+      { icon: 'MonitorSmartphone', title: 'Mobilen som fjärrkontroll', text: 'Styr presentationen från mobilen, och koppla in en projektor med en kod på sex tecken. Mobilen säger alltid exakt vart man ska, till exempel "sång 2, del 3", aldrig bara "nästa".' },
+      { icon: 'WifiOff', title: 'Klarar att nätet dör', text: 'Datorprogrammet har en egen databas och synkar när nätet finns. Om routern startar om mitt i gudstjänsten händer ingenting på skärmen.' },
+      { icon: 'BookOpen', title: 'Bibeln på ett ögonblick', text: 'Skriv "Matt 3:15-4:6" eller bara "ma", så kommer verserna upp. Sökningen förstår svenska boknamn och avsnitt som går över kapitelgränser.' },
+      { icon: 'ClipboardCheck', title: 'CCLI-rapporten fyller sig själv', text: 'Varje sång som visas sparas för kyrkans licensrapport, även när nätet är borta. Den skickas senare, med rätt datum och utan att räknas två gånger.' },
+      { icon: 'FileInput', title: 'Läser ProPresenter-filer', text: 'Sånger från ProPresenter 7 läses direkt ur deras filer, med text och CCLI-uppgifter. PowerPoint och PDF blir bilder i presentationen.' },
+      { icon: 'Projector', title: 'Hittar projektorn själv', text: 'Datorprogrammet öppnar bilden direkt på projektorn. Först provades Mac Catalyst, men den såg bara en skärm. Därför blev det Electron.' },
+      { icon: 'Images', title: 'Bilderna tas automatiskt', text: 'Ett verktyg tar skärmdumpar på svenska och engelska, i ljust och mörkt läge och i olika storlekar. Bilderna här kommer därifrån.' },
     ],
     tech: ['C#', '.NET', 'Blazor', 'SignalR', 'Electron', 'PostgreSQL', 'Tailwind', '.NET Aspire'],
     live: { href: 'https://www.gospelpresenter.com', label: 'Till gospelpresenter.com' },
@@ -224,8 +188,6 @@ export const projects: Project[] = [
   {
     id: 'kropp',
     name: 'Kropp',
-    kicker: 'Hälsologg',
-    title: 'Min träningslogg',
     headline: 'Träningsloggen som klarar sig utan nät.',
     line: 'Logga passen i gymmet, även utan täckning.',
     summary:
@@ -235,19 +197,12 @@ export const projects: Project[] = [
       'Allt sparas först i telefonen och synkas med min server när det finns nät, så täckningen i gymmet spelar ingen roll. Jag planerar nästa pass från en mall, bockar av seten och kan se hur vikterna har utvecklats.',
       'Första versionen var skriven i Blazor och .NET. Sedan skrev jag om den i React och TypeScript. Datamodellen är densamma, så de gamla passen följde med.',
     ],
-    highlights: [
-      'Fungerar helt utan nät och synkar i bakgrunden',
-      'Bara beröm, inga streaks som bryts',
-      'Känns som en iPhone-app, utan UI-bibliotek',
-      '302 övningar med bild, som finns kvar offline',
-    ],
     cool: [
-      { title: 'Nätet är valfritt', text: 'Allt sparas först i telefonen, och ändringar väntar i en utkorg tills det finns nät. Ett helt pass skickas som en enhet, så det blir aldrig halvsparat. Ett automatiskt test visar att appen startar, sparar och laddar om helt utan nät.' },
-      { title: 'Bara beröm', text: 'Appen räknar det man har gjort, aldrig det man har missat. Det finns inga streaks som bryts och inget rött för en tom vecka. Den firar första passet, jämna tal och veckans mål, och den som kommer tillbaka efter ett uppehåll blir välkomnad.' },
-      { title: 'Känns som iOS', text: 'Knapparna är som glas som flyter över sidan, och sidor glider in och ut som i en iPhone-app. Man stänger ark genom att dra ner dem och sveper bort rader i listor. Inget UI-bibliotek används, allt är skrivet från grunden.' },
-      { title: 'Grafer som i Hälsa', text: 'Graferna är byggda utan bibliotek men fungerar som i Apples Hälsa-app. Man drar fingret över grafen och ser värdet stort ovanför.' },
-      { title: '302 övningar med bild', text: 'Varje övning kan ha en teckning. Av tre varianter per övning visas den som syns tydligast i liten storlek, och det valdes genom att mäta alla 906 bilder. Ett pass hämtar sina bilder i förväg, så att de finns i gymmet utan nät.' },
-      { title: 'Gamla data är heliga', text: 'Tester låser databasen, synkformatet och exportfilen, även det som den gamla Blazor-versionen skrev. Regeln är att när ett sådant test går sönder ändrar man tillbaka koden, inte testet.' },
+      { icon: 'PartyPopper', title: 'Bara beröm', text: 'Appen räknar det man har gjort, aldrig det man har missat. Inga streaks bryts. Den firar första passet, jämna tal och veckans mål, och välkomnar den som kommer tillbaka efter ett uppehåll.' },
+      { icon: 'WifiOff', title: 'Nätet är valfritt', text: 'Allt sparas först i telefonen och skickas när det finns nät. Ett helt pass skickas på en gång, så det blir aldrig halvsparat.' },
+      { icon: 'Smartphone', title: 'Känns som iOS', text: 'Knapparna ser ut som glas, och sidorna glider in och ut som i en iPhone-app. Man drar ner ark för att stänga dem och sveper bort rader. Inget UI-bibliotek används.' },
+      { icon: 'ChartLine', title: 'Grafer som i Hälsa', text: 'Graferna fungerar som i Apples Hälsa-app. Dra fingret över grafen, så syns värdet stort ovanför.' },
+      { icon: 'Dumbbell', title: '302 övningar med bild', text: 'Varje övning kan ha en teckning, utvald för att synas bra även i liten storlek. Ett pass hämtar sina bilder i förväg, så de finns i gymmet utan nät.' },
     ],
     tech: ['React', 'TypeScript', 'Tailwind', 'IndexedDB', 'Hono', 'PostgreSQL', 'PWA'],
     code: 'https://github.com/larsabrasha/Kropp',
@@ -267,6 +222,8 @@ export const projects: Project[] = [
 
 export interface Extra {
   name: string
+  /** A lucide icon, see src/pages.tsx. */
+  icon: 'weight' | 'calculator' | 'disc' | 'thermometer'
   text: string
   href?: string
 }
@@ -275,21 +232,25 @@ export interface Extra {
 export const extras: Extra[] = [
   {
     name: 'Smartvåg av en Wii-bräda',
+    icon: 'weight',
     text: 'En Raspberry Pi läser de fyra lastcellerna i en Wii Balance Board, väntar tills man står still och skickar vikten till Home Assistant.',
     href: 'https://github.com/larsabrasha/body-stats',
   },
   {
     name: 'FAST9 för TI-84',
+    icon: 'calculator',
     text: 'Ett spel i Z80-assembler för grafräknaren: skriv 1+2+3+4+5+6+7+8+9 så fort du kan. Topplistan överlever till och med att batterierna tas ur.',
     href: 'https://github.com/larsabrasha/fast9',
   },
   {
     name: 'Musik med RFID-kort',
+    icon: 'disc',
     text: 'Lägg ett kort med ett skivomslag på läsaren, så börjar skivan spela. Korten skrivs ut från en PDF med omslagen, och en skärm visar vad som spelas.',
     href: 'https://github.com/larsabrasha/volumio-controller',
   },
   {
     name: 'Sensorer i huset',
+    icon: 'thermometer',
     text: 'Små ESP32-enheter i garaget, verkstaden, källaren och andra rum, med temperatur, luftfuktighet och små skärmar, alla kopplade till Home Assistant.',
     href: 'https://github.com/larsabrasha/esphome',
   },
