@@ -124,23 +124,28 @@ function Picture({ shot, eager = false, className }: { shot: Shot; eager?: boole
 }
 
 /** A screenshot in a browser window, a phone or a tablet. Device corners and bezels are in % of the size, so they look
- * the same small or large. Bezels follow the real devices: iPhone 15 (71.6 mm wide, 3.3 mm bezel) and iPad Air 11"
- * (247.6 x 178.5 mm, 10 mm bezel). */
+ * the same small or large. Bezels follow the real devices: iPhone 18 Pro (71.9 x 150 mm, screen 66.6 x 144.8 mm, so a
+ * 2.65 mm bezel) and iPad Pro 11" M5 (249.7 x 177.5 mm, screen 232.8 x 160.5 mm, so an 8.5 mm bezel). */
 function Frame({ shot, eager, big = false, bare = false }: { shot: Shot; eager?: boolean; big?: boolean; bare?: boolean }) {
   const shadow = big ? 'card-shadow' : 'shadow-frame'
   if (shot.frame === 'phone')
     return (
-      <div className={`mx-auto max-w-[17rem] rounded-[16.8%/7.4%] bg-[#141311] p-[4.5%] ring-1 ring-line ${shadow}`}>
-        <div className="overflow-hidden rounded-[14%/6.5%]">
-          <Picture shot={shot} eager={eager} className="block h-auto w-full" />
+      // The outer box sets the phone's width; the bezel's % padding is then a share of the phone, not of the page.
+      <div className="mx-auto max-w-[17rem]">
+        <div className={`device rounded-[16.6%/8%] p-[3.7%] ${shadow}`}>
+          <div className="overflow-hidden rounded-[14%/6.4%]">
+            <Picture shot={shot} eager={eager} className="block h-auto w-full" />
+          </div>
         </div>
       </div>
     )
   if (shot.frame === 'tablet')
     return (
-      <div className={`rounded-[5.5%/7.6%] bg-[#141311] p-[4.1%] ring-1 ring-line ${shadow}`}>
-        <div className="overflow-hidden rounded-[1.5%/2.2%]">
-          <Picture shot={shot} eager={eager} className="block h-auto w-full" />
+      <div>
+        <div className={`device rounded-[5.4%/7.6%] p-[3.4%] ${shadow}`}>
+          <div className="overflow-hidden rounded-[2.1%/3.1%]">
+            <Picture shot={shot} eager={eager} className="block h-auto w-full" />
+          </div>
         </div>
       </div>
     )
@@ -323,7 +328,7 @@ function Devices({ shots }: { shots: Shot[] }) {
   return (
     <div className="mt-10">
       <figure>
-        {/* Real sizes: an iPhone screen is about 29 % as wide as an 11-inch iPad's in landscape. */}
+        {/* Real sizes: an iPhone 18 Pro is 71.9 mm wide, an 11-inch iPad Pro 249.7 mm in landscape, so 29 %. */}
         <div className="relative mx-auto max-w-4xl pb-[70%]">
           <div className="absolute top-0 left-[3%] w-[80%]">
             <Zoomable shot={pad} id={id(pad)} caption={false} />

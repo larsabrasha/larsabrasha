@@ -86,6 +86,24 @@ html {
   }
 }
 
+/* iPhone and iPad bodies: a dark body with a faint metal edge, like the real devices in Apple's product shots. */
+.device {
+  position: relative;
+  background: linear-gradient(160deg, #3a3a3d 0%, #1c1c1e 18%, #0d0d0e 60%, #1f1f21 100%);
+}
+/* The edge is drawn on top, so the shadow classes (shadow-frame, card-shadow) keep their own box-shadow. */
+.device::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1.5px rgb(255 255 255 / 0.16),
+    inset 0 0 0 3px rgb(0 0 0 / 0.55),
+    0 0 0 1px rgb(0 0 0 / 0.3);
+}
+
 /* Large view of a screenshot, opened with a popover button: no JavaScript. */
 .lightbox {
   margin: auto;

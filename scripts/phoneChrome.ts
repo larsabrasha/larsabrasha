@@ -2,7 +2,9 @@
 // buttons are not squeezed against the frame's rounded corners. Take the screenshot of the content area
 // only, 390 x 756 pt (844 pt minus 54 pt status bar and 34 pt home indicator), so that the result is a
 // real 390 x 844 pt iPhone screen. Then: npx tsx scripts/phoneChrome.ts public/bilder/kropp/01-traning.webp ...
-// Full-screen images (height/width >= 2) are skipped, so re-running is safe.
+// Full-screen images (height/width >= 2) are skipped, so re-running is safe. With --status-bar, already finished
+// iPhone images (780 x 1688) get their status bar redrawn, e.g. after changing the Dynamic Island.
+// The Dynamic Island follows the iPhone 18 Pro: about 20 % of the screen width.
 // Landscape images are treated as an iPad: take 1180 x 796 pt (820 minus a 24 pt status bar), and only a
 // status bar is added. Full-screen iPad images (width/height <= 1.45) are skipped.
 import sharp, { type Sharp } from 'sharp'
@@ -23,7 +25,7 @@ function statusBar(width: number, ink: string) {
   const s = width / 780 // drawn for a 780 px wide (390 pt) screen
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${TOP}" viewBox="0 0 780 ${TOP / s}">
   <text x="112" y="74" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="600" fill="${ink}">9:41</text>
-  <rect x="270" y="22" width="240" height="72" rx="36" fill="#000"/>
+  <rect x="310" y="24" width="160" height="64" rx="32" fill="#000"/>
   <g fill="${ink}">
     <rect x="586" y="58" width="6" height="12" rx="2"/><rect x="596" y="52" width="6" height="18" rx="2"/>
     <rect x="606" y="46" width="6" height="24" rx="2"/><rect x="616" y="40" width="6" height="30" rx="2"/>
@@ -54,7 +56,20 @@ function homeIndicator(width: number, ink: string) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${BOTTOM}"><rect x="${(width - w) / 2}" y="${BOTTOM - 26}" width="${w}" height="10" rx="5" fill="${ink}"/></svg>`
 }
 
-for (const file of process.argv.slice(2)) {
+const redraw = process.argv.includes('--status-bar')
+for (const file of process.argv.slice(2).filter((a) => !a.startsWith('--'))) {
+  if (redraw) {
+    const img = sharp(file)
+    const { width = 0, height = 0 } = await img.metadata()
+    if (width !== 780 || height !== 1688) continue
+    const top = await edgeColour(img, width, TOP)
+    const ink = luminance(top) > 0.5 ? '#000' : '#fff'
+    const band = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${TOP}"><rect width="${width}" height="${TOP}" fill="rgb(${top.r},${top.g},${top.b})"/></svg>`
+    const out = await img.clone().composite([{ input: Buffer.from(band), top: 0, left: 0 }, { input: Buffer.from(statusBar(width, ink)), top: 0, left: 0 }]).webp({ quality: 82 }).toBuffer()
+    await sharp(out).toFile(file)
+    console.log(`${file}: status bar redrawn`)
+    continue
+  }
   const img = sharp(file)
   const { width = 0, height = 0 } = await img.metadata()
   if (width > height) {
